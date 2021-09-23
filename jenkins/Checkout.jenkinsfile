@@ -22,7 +22,7 @@ pipeline {
                 sh '''ls -al
                 cd terraform
                 terraform init
-                terraform plan -out tms'''
+                terraform plan'''
                 }
             }
         }
@@ -38,7 +38,7 @@ pipeline {
         stage('TF Apply') {
             steps {
               script {
-                sh 'terraform apply'
+                sh 'terraform apply -f'
             }
           }
         }
