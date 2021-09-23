@@ -1,0 +1,71 @@
+pipeline {
+    agent { node { label 'Ansible' } }
+    options { timestamps () }
+    triggers {
+        pollSCM 'H/1 * * * *'
+    }
+
+    stages {
+        stage('GIT') {
+            steps {
+                echo "========== Start checkout from GitHUB =========="
+                git branch: 'app',
+                url: 'https://github.com/nsdementar/DevOps_Course_Exam.git'
+                sh 'ls -al'
+            }
+        }
+
+        stage('Terraform plan') {
+            steps {
+                echo "========== Start Terraform plan =========="
+                sh 'ls -al'
+                sh 'terraform init'
+                sh 'terraform plan -out tms'
+                }
+        }
+
+        stage('Approval') {
+            steps {
+                script {
+                def userInput = input(id: 'confirm', message: 'Apply Terraform?', parameters: [ [$class: 'BooleanParameterDefinition', defaultValue: false, description: 'Apply terraform', name: 'confirm'] ])
+                }
+            }
+        }
+
+        stage('TF Apply') {
+          steps {
+            script {
+              sh 'terraform apply -input=false myplan'
+            }
+          }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+        /* stage('Syntax check') {
+            steps {
+                echo "========== Start syntax check =========="
+                sh '''cd app
+                ansible-playbook -i hosts.yml hw23.yml --syntax-check'''
+            }
+        }
+        
+        stage('Start Ansible Playbook') {
+            steps {
+                echo "========== Start Ansible Playbook =========="
+                sh '''cd HW23
+                ansible-playbook -i hosts.yml --tags=untagged -u $ANSIBLE_USER hw23.yml'''
+                echo "========== End Ansible Playbook =========="
+            }
+        } */
+
+    }
+}
