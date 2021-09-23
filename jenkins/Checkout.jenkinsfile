@@ -22,7 +22,7 @@ pipeline {
                 sh '''ls -al
                 cd terraform
                 terraform init
-                terraform plan'''
+                terraform plan -out=tfplan -input=false'''
                 }
             }
         }
@@ -38,7 +38,7 @@ pipeline {
         stage('TF Apply') {
             steps {
               script {
-                sh 'terraform apply -auto-approve'
+                sh 'terraform apply -input=false tfplan'
             }
           }
         }
