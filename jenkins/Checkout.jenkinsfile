@@ -38,7 +38,7 @@ pipeline {
         stage('TF Apply') {
             steps {
               script {
-                sh 'terraform apply -f'
+                sh 'terraform apply -auto-approve'
             }
           }
         }
