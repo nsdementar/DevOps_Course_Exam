@@ -19,8 +19,7 @@ pipeline {
             steps {
               script {
                 echo "========== Start Terraform plan =========="
-                sh '''ls -al
-                cd terraform
+                sh '''cd terraform
                 terraform init
                 terraform plan -out=tfplan -input=false'''
                 }
@@ -38,7 +37,7 @@ pipeline {
         stage('TF Apply') {
             steps {
               script {
-                sh '''ls -al
+                sh '''cd terraform
                 terraform apply -input=false tfplan'''
             }
           }
