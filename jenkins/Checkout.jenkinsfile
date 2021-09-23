@@ -17,55 +17,29 @@ pipeline {
 
         stage('Terraform plan') {
             steps {
+              script {
                 echo "========== Start Terraform plan =========="
                 sh 'ls -al'
                 sh 'terraform init'
                 sh 'terraform plan -out tms'
                 }
+            }
         }
 
         stage('Approval') {
             steps {
-                script {
+              script {
                 def userInput = input(id: 'confirm', message: 'Apply Terraform?', parameters: [ [$class: 'BooleanParameterDefinition', defaultValue: false, description: 'Apply terraform', name: 'confirm'] ])
                 }
             }
         }
 
         stage('TF Apply') {
-          steps {
-            script {
-              sh 'terraform apply -input=false myplan'
+            steps {
+              script {
+                sh 'terraform apply -input=false myplan'
             }
           }
         }
-    }
-}
-
-
-
-
-
-
-
-
-
-        /* stage('Syntax check') {
-            steps {
-                echo "========== Start syntax check =========="
-                sh '''cd app
-                ansible-playbook -i hosts.yml hw23.yml --syntax-check'''
-            }
-        }
-        
-        stage('Start Ansible Playbook') {
-            steps {
-                echo "========== Start Ansible Playbook =========="
-                sh '''cd HW23
-                ansible-playbook -i hosts.yml --tags=untagged -u $ANSIBLE_USER hw23.yml'''
-                echo "========== End Ansible Playbook =========="
-            }
-        } */
-
     }
 }
