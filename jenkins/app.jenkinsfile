@@ -16,7 +16,15 @@ pipeline {
         upstream(upstreamProjects: 'docker_lint', threshold:hudson.model.Result.SUCCESS)
     }
 
-    stages {      
+    stages { 
+        stage('Git') {
+            steps {
+                echo "========== Start checkout from GitHUB =========="
+                git branch: 'main',
+                url: 'git@github.com:nsdementar/DevOps_Course_Exam.git'
+            }
+        }
+             
         stage('========== Building image ==========') {
             steps {
               script {
