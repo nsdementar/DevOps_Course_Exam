@@ -13,7 +13,7 @@ pipeline {
             steps {
                 echo "========== Start checkout from GitHUB =========="
                 git branch: 'main',
-                url: 'https://github.com/nsdementar/DevOps_Course_Exam.git'
+                url: 'git@github.com:nsdementar/DevOps_Course_Exam.git'
             }
         }
         
