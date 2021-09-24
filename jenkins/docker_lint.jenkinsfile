@@ -1,0 +1,27 @@
+pipeline {
+    agent { node { label 'Ansible' } }
+    parameters {
+    string(name: 'PATH_DOCKERFILE', defaultValue: 'app/Dockerfile', description: '')
+    }
+    options { timestamps () }
+    triggers {
+        pollSCM 'H/1 * * * *'
+    }
+
+    stages {
+        stage('Git') {
+            steps {
+                echo "========== Start checkout from GitHUB =========="
+                git branch: 'HW28',
+                url: 'https://github.com/nsdementar/TMS.git'
+            }
+        }
+        
+         stage('Start dockerfile_lint') {
+            steps {
+                echo "========== Start Dockerfile_lint =========="
+                sh 'docker run --rm -i hadolint/hadolint < ${PATH_DOCKERFILE}'
+            }
+        }
+    }
+}

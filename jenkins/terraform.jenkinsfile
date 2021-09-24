@@ -44,14 +44,5 @@ pipeline {
             }
           }
         }
-
-        stage('Start Ansible Playbook') {
-            steps {
-                echo "========== Start Ansible Playbook =========="
-                git branch: 'release-2.17',
-                url: 'https://github.com/kubernetes-sigs/kubespray.git'
-                sh 'ansible-playbook -i terraform/hosts kubespray/cluster.yml --become --become-user=root --private-key=terraform/k8s-cluster-private'
-            }
-        }
     }
 }

@@ -1,0 +1,42 @@
+pipeline {
+    agent { node { label 'Ansible' } }
+    parameters {
+    string(name: 'PATH_DOCKERFILE', defaultValue: 'app/Dockerfile', description: '')
+    string(name: 'VERSION', defaultValue: 'v1', description: '')
+    string(name: 'IMAGE_NAME', defaultValue: 'tms-exam-image', description: '')
+    string(name: 'USER_REPO', defaultValue: 'alexpalkhouski', description: '')
+    }
+    environment { 
+        registry = "alexpalkhouski/tms" 
+        registryCredential = 'dockerhub_id' 
+        dockerImage = ''
+    }
+    options { timestamps () }
+    triggers {
+        upstream(upstreamProjects: 'docker_lint', threshold:hudson.model.Result.SUCCESS)
+    }
+
+    stages {      
+        stage('========== Building image ==========') {
+            steps {
+              script {
+              dockerImage = docker.build ("${USER_REPO}/${IMAGE_NAME}", "-f ${PATH_DOCKERFILE} .")
+                  }
+                }
+        }
+        stage('========== Deploy Image ==========') {
+            steps{
+              script {
+              docker.withRegistry( '', registryCredential ) {
+              dockerImage.push("${VERSION}_${GIT_COMMIT}_${BUILD_NUMBER}")
+                }
+              }
+            }
+        }
+        stage('Remove Unused docker image') {
+            steps{
+            sh "docker rmi ${USER_REPO}/${IMAGE_NAME}:${VERSION}_${GIT_COMMIT}_${BUILD_NUMBER}"
+            }   
+        }
+    }
+}
