@@ -68,7 +68,7 @@ pipeline {
             }
         }
 
-        stage('========== Building image ==========') {
+        stage('Building Docker Image') {
             steps {
               script {
               dockerImage = docker.build ("${USER_REPO}/${IMAGE_NAME}", "-f ${PATH_DOCKERFILE} .")
@@ -76,7 +76,7 @@ pipeline {
            }
         }
 
-        stage('========== Deploy Image ==========') {
+        stage('Deploy Docker Image') {
             steps{
               script {
               docker.withRegistry( '', registryCredential ) {
@@ -89,6 +89,12 @@ pipeline {
         stage('Remove Unused docker image') {
             steps{
             sh "docker rmi ${USER_REPO}/${IMAGE_NAME}:${GIT_COMMIT[0..7]}"
+            }
+          }
+
+        stage('Deploy docker image to k8s cluster') {
+            steps{
+            sh "kubectl run tms-exam-test ${USER_REPO}/${IMAGE_NAME}:${GIT_COMMIT[0..7]} --port 80"
             }
           }
         }
