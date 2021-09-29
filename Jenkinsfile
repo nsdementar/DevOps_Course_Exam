@@ -55,7 +55,6 @@ pipeline {
                 echo "========== Start Ansible Playbook =========="
                 sh '''
                 [ ! -d 'kubespray' ] && git clone -b release-2.7 https://github.com/kubernetes-sigs/kubespray.git
-                ls -al
                 ansible-playbook -i terraform/hosts kubespray/cluster.yml --become --become-user=root --private-key=terraform/k8s-cluster-private'''
               }
         }
