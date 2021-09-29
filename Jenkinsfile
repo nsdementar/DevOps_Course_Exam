@@ -94,7 +94,7 @@ pipeline {
 
         stage('Deploy docker image to k8s cluster') {
             steps{
-            sh "kubectl run tms-exam-test ${USER_REPO}/${IMAGE_NAME}:${GIT_COMMIT[0..7]} --port 80"
+            sh "kubectl run tms-exam-test --image=${USER_REPO}/${IMAGE_NAME}:${GIT_COMMIT[0..7]} --port 80"
             }
           }
         }
