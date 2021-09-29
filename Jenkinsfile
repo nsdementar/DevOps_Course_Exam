@@ -53,7 +53,7 @@ pipeline {
         stage('Create k8s cluster') {
             steps {
                 echo "========== Start Ansible Playbook =========="
-                sh 'mkdir ks || cd ks || git clone https://github.com/kubernetes-sigs/kubespray.git || cd ..'
+                sh 'mkdir ks && cd ks && git clone https://github.com/kubernetes-sigs/kubespray.git && cd ..'
                 /*git branch: 'release-2.17',
                 url: 'https://github.com/kubernetes-sigs/kubespray.git'
                 */
