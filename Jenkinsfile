@@ -78,7 +78,7 @@ pipeline {
             steps{
               script {
               docker.withRegistry( '', registryCredential ) {
-              dockerImage.push("${VERSION}_${GIT_COMMIT[0..7]}_${BUILD_NUMBER}")
+              dockerImage.push("${GIT_COMMIT[0..7]}")
               }
             }
           }
@@ -86,7 +86,7 @@ pipeline {
 
         stage('Remove Unused docker image') {
             steps{
-            sh "docker rmi ${USER_REPO}/${IMAGE_NAME}:${VERSION}_${GIT_COMMIT[0..7]}_${BUILD_NUMBER}"
+            sh "docker rmi ${USER_REPO}/${IMAGE_NAME}:${GIT_COMMIT[0..7]}"
             }
           }
         }
