@@ -9,9 +9,9 @@ pipeline {
         registry = "alexpalkhouski/tms" 
         registryCredential = 'dockerhub_id' 
         dockerImage = ''
-    properties([pipelineTriggers([githubPush()])])
     }
-    options { 
+    options {
+      [pipelineTriggers([githubPush()])]
       ansiColor('xterm')
       timestamps () }
 
