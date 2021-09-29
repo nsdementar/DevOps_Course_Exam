@@ -11,7 +11,6 @@ pipeline {
         dockerImage = ''
     }
     options {
-      [pipelineTriggers([githubPush()])]
       ansiColor('xterm')
       timestamps () }
 
