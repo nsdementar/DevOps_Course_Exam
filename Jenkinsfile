@@ -57,7 +57,7 @@ pipeline {
                 /*git branch: 'release-2.17',
                 url: 'https://github.com/kubernetes-sigs/kubespray.git'
                 */
-                sh 'ansible-playbook -i terraform/hosts ks/kubespray/cluster.yml --become --become-user=root --private-key=terraform/k8s-cluster-private'
+                sh 'ansible-playbook -i terraform/hosts kubespray/cluster.yml --become --become-user=root --private-key=terraform/k8s-cluster-private'
                 sh 'rm -rf kubespray'
             }
         }
