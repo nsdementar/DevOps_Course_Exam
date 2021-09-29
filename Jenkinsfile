@@ -2,7 +2,6 @@ pipeline {
     agent { node { label 'Ansible' } }
     parameters {
     string(name: 'PATH_DOCKERFILE', defaultValue: 'app/Dockerfile', description: '')
-    string(name: 'VERSION', defaultValue: 'v1', description: '')
     string(name: 'IMAGE_NAME', defaultValue: 'tms-exam-image', description: '')
     string(name: 'USER_REPO', defaultValue: 'alexpalkhouski', description: '')
     }
@@ -10,8 +9,11 @@ pipeline {
         registry = "alexpalkhouski/tms" 
         registryCredential = 'dockerhub_id' 
         dockerImage = ''
+    properties([pipelineTriggers([githubPush()])])
     }
-    options { timestamps () }
+    options { 
+      ansiColor('xterm')
+      timestamps () }
 
     stages {
         stage('Git') {
