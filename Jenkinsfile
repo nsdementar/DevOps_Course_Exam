@@ -53,13 +53,10 @@ pipeline {
         stage('Create k8s cluster') {
             steps {
                 echo "========== Start Ansible Playbook =========="
-                sh 'git clone https://github.com/kubernetes-sigs/kubespray.git'
-                /*git branch: 'release-2.17',
-                url: 'https://github.com/kubernetes-sigs/kubespray.git'
-                */
-                sh 'ansible-playbook -i terraform/hosts kubespray/cluster.yml --become --become-user=root --private-key=terraform/k8s-cluster-private'
-                sh 'rm -rf kubespray'
-            }
+                sh '''
+                [ ! -d 'kubespray' ] && git clone https://github.com/kubernetes-sigs/kubespray.git'
+                ansible-playbook -i terraform/hosts kubespray/cluster.yml --become --become-user=root --private-key=terraform/k8s-cluster-private'''
+              }
         }
 
         stage('Start dockerfile_lint') {
