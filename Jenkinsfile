@@ -112,12 +112,12 @@ pipeline {
             else
             echo "Pod is not runnig"
             fi
-            
+
             curl localhost:8080'''
             }
           }
 
-        stage('Test app') {
+       /* stage('Test app') {
             steps{
             sh "kubectl ${POD_NAME}-${GIT_COMMIT[0..7]} --image=${USER_REPO}/${IMAGE_NAME}:${GIT_COMMIT[0..7]} --namespace=${NAMESPACE_TEST} --port 80"
             }
@@ -128,5 +128,6 @@ pipeline {
             sh "kubectl ${POD_NAME}-${GIT_COMMIT[0..7]} --image=${USER_REPO}/${IMAGE_NAME}:${GIT_COMMIT[0..7]} --namespace=${NAMESPACE_TEST} --port 80"
             }
           }
+          */
         }
 }
