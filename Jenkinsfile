@@ -5,6 +5,8 @@ pipeline {
     string(name: 'IMAGE_NAME', defaultValue: 'tms-exam-image', description: '')
     string(name: 'USER_REPO', defaultValue: 'alexpalkhouski', description: '')
     string(name: 'POD_NAME', defaultValue: 'tms-exam-pod', description: '')
+    string(name: 'NAMESPACE_TEST', defaultValue: 'test', description: '')
+    string(name: 'NAMESPACE_PROD', defaultValue: 'prod', description: '')
     }
     environment {
         registry = "alexpalkhouski/tms" 
@@ -93,9 +95,17 @@ pipeline {
             }
           }
 
-        stage('Deploy docker image to k8s cluster') {
+        stage('Deploy to test ns') {
             steps{
-            sh "kubectl ${POD_NAME}-${GIT_COMMIT[0..7]} --image=${USER_REPO}/${IMAGE_NAME}:${GIT_COMMIT[0..7]} --port 80"
+            sh "kubectl run ${POD_NAME}-${GIT_COMMIT[0..7]} --image=${USER_REPO}/${IMAGE_NAME}:${GIT_COMMIT[0..7]} --namespace=${NAMESPACE_TEST} --port 80"
+            sh "kubectl --namespace ${NAMESPACE_TEST} port-forward ${POD_NAME}-${GIT_COMMIT[0..7]} --port 80:80"
+            sh "curl localhost:80"
+            }
+          }
+
+        stage('Deploy to prod ns') {
+            steps{
+            sh "kubectl ${POD_NAME}-${GIT_COMMIT[0..7]} --image=${USER_REPO}/${IMAGE_NAME}:${GIT_COMMIT[0..7]} --namespace=${NAMESPACE_TEST} --port 80"
             }
           }
         }
