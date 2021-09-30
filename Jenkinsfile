@@ -105,14 +105,6 @@ pipeline {
             kubectl --namespace ${NAMESPACE_TEST} port-forward ${POD_NAME}-${GIT_COMMIT[0..7]} 8080:80
             sleep 10
             fi
-
-            if kubectl get pods | grep running
-            then
-            exit 0
-            else
-            echo "Pod is not runnig"
-            fi
-
             curl localhost:8080'''
             }
           }
