@@ -112,7 +112,7 @@ pipeline {
 
         stage('Test app') {
             steps{
-            sh "kubectl ${POD_NAME}-${GIT_COMMIT[0..7]} --image=${USER_REPO}/${IMAGE_NAME}:${GIT_COMMIT[0..7]} --namespace=${NAMESPACE_TEST} --port 80"
+            sh "kubectl run ${POD_NAME}-${GIT_COMMIT[0..7]} --image=${USER_REPO}/${IMAGE_NAME}:${GIT_COMMIT[0..7]} --namespace=${NAMESPACE_TEST} --port 80"
             }
           }
 
@@ -122,6 +122,6 @@ pipeline {
             }
           }
       */
-      
+
         }
 }
