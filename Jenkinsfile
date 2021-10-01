@@ -102,8 +102,8 @@ pipeline {
             then exit 0
             else
             kubectl run ${POD_NAME}-${GIT_COMMIT[0..7]} --image=${USER_REPO}/${IMAGE_NAME}:${GIT_COMMIT[0..7]} --namespace=${NAMESPACE_TEST} --port 80
+            sleep 30
             kubectl --namespace ${NAMESPACE_TEST} port-forward ${POD_NAME}-${GIT_COMMIT[0..7]} 8080:80
-            sleep 10
             fi
             curl localhost:8080'''
             }
