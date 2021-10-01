@@ -95,9 +95,9 @@ pipeline {
             }
           }
 
-        stage('Deploy to test ns') {
+        /*stage('Deploy to test ns') {
             steps{
-            sh '''#!/bin/bash
+             sh '''#!/bin/bash
             if kubectl get pods | grep ${POD_NAME}-${GIT_COMMIT[0..7]}
             then exit 0
             else
@@ -108,18 +108,20 @@ pipeline {
             curl localhost:8080'''
             }
           }
-
-       /* stage('Test app') {
-            steps{
-            sh "kubectl ${POD_NAME}-${GIT_COMMIT[0..7]} --image=${USER_REPO}/${IMAGE_NAME}:${GIT_COMMIT[0..7]} --namespace=${NAMESPACE_TEST} --port 80"
-            }
-          }
-
-        stage('Deploy to prod ns') {
-            steps{
-            sh "kubectl ${POD_NAME}-${GIT_COMMIT[0..7]} --image=${USER_REPO}/${IMAGE_NAME}:${GIT_COMMIT[0..7]} --namespace=${NAMESPACE_TEST} --port 80"
-            }
-          }
           */
+
+        stage('Test app') {
+            steps{
+            sh "kubectl ${POD_NAME}-${GIT_COMMIT[0..7]} --image=${USER_REPO}/${IMAGE_NAME}:${GIT_COMMIT[0..7]} --namespace=${NAMESPACE_TEST} --port 80"
+            }
+          }
+
+        /*stage('Deploy to prod ns') {
+            steps{
+            sh "kubectl ${POD_NAME}-${GIT_COMMIT[0..7]} --image=${USER_REPO}/${IMAGE_NAME}:${GIT_COMMIT[0..7]} --namespace=${NAMESPACE_TEST} --port 80"
+            }
+          }
+      */
+      
         }
 }
