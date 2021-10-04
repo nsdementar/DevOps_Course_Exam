@@ -99,7 +99,7 @@ pipeline {
             steps{
              sh '''
              ls -al
-             helm install tms-exam Chart-app/ --set container.image=${IMAGE_NAME}:${GIT_COMMIT[0..7]}
+             helm install tms-exam Chart-app/ --set Container.Image=${IMAGE_NAME}:${GIT_COMMIT[0..7]}
             '''
             }
           }
