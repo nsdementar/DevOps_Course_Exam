@@ -1,4 +1,6 @@
-container:
-  image: alexpalkhouski/tms-exam-image:4c7ccd94
+Container:
+  Image: alexpalkhouski/tms-exam-image:4c7ccd94
 
-replicaCount: 2
+ReplicaCount: 2
+Port: 80
+NodePort: 30000

@@ -97,19 +97,14 @@ pipeline {
 
         stage('Deploy to test ns') {
             steps{
-             sh '''#!/bin/bash
-            if kubectl get pods | grep ${POD_NAME}-${GIT_COMMIT[0..7]}
-            then exit 0
-            else
-            kubectl run ${POD_NAME}-${GIT_COMMIT[0..7]} --image=${USER_REPO}/${IMAGE_NAME}:${GIT_COMMIT[0..7]} --namespace=${NAMESPACE_TEST} --port 80
-            sleep 30
-            kubectl --namespace ${NAMESPACE_TEST} port-forward ${POD_NAME}-${GIT_COMMIT[0..7]} 8080:80
-            fi
+             sh '''
+             ls -al
+             helm install tms-exam /Chart-app
             '''
             }
           }
 
-        stage('Test app') {
+       /* stage('Test app') {
             steps{
 			      sh('''#!/bin/bash
             status=$(curl -o /dev/null  -s  -w "%{http_code}"  http://10.10.18.142:8080)

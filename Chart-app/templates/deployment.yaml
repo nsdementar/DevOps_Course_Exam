@@ -5,7 +5,7 @@ metadata:
   labels:
     app: {{ .Release.Name }}-app
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.ReplicaCount }}
   selector: 
     matchLabels:
       project: {{ .Release.Name }}
@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
         - name: {{ .Release.Name }}-web
-          image: {{ .Values.container.image }}
+          image: {{ .Values.Container.Image }}
           ports: 
             - containerPort: 80
