@@ -1,0 +1,4 @@
+container:
+  image: alexpalkhouski/tms-exam-image:4c7ccd94
+
+replicaCount: 2
