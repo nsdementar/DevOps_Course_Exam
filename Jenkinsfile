@@ -98,9 +98,9 @@ pipeline {
         stage('Deploy to test ns') {
             steps{
              sh '''
-             ls -al
-             helm install tms-exam Chart-app/ --set Container.Image=${USER_REPO}/${IMAGE_NAME}:${GIT_COMMIT[0..7]}
-            '''
+             helm install tms-exam Chart-app/
+             kubectl run -it --rm curler --image=curlimages/curl curl tms-exam-service:30000
+             '''
             }
           }
 
