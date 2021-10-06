@@ -7,8 +7,8 @@ pipeline {
     string(name: 'IMAGE_NAME', defaultValue: 'tms-exam-image', description: '')
     string(name: 'USER_REPO', defaultValue: 'alexpalkhouski', description: '')
     string(name: 'POD_NAME', defaultValue: 'tms-exam-pod', description: '')
-    string(name: 'NAMESPACE_TEST', defaultValue: 'test', description: '')
-    string(name: 'NAMESPACE_PROD', defaultValue: 'prod', description: '')
+    string(name: 'NAMESPACE_TEST', defaultValue: 'test-ns', description: '')
+    string(name: 'NAMESPACE_PROD', defaultValue: 'prod-ns', description: '')
     string(name: 'CHART_NAME', defaultValue: 'tms-exam', description: '')
     }
     environment {
@@ -132,11 +132,37 @@ pipeline {
             }
         }
 
+        stage('Approval Deploy to prod') {
+            steps {
+              script {
+                def userInput = input(id: 'confirm', message: 'Apply Deploy to PROD?', parameters: [ [$class: 'BooleanParameterDefinition', defaultValue: false, description: 'Apply deploy to production', name: 'confirm'] ])
+                }
+            }
+        }
+
         stage('Deploy to prod ns') {
             steps{
-            sh "helm install ${CHART_NAME} TMS-App-HelmChart-${BUILD_NUMBER}.tgz --namespace=${NAMESPACE_PROD} --create-namespace"
+            sh """
+            helm uninstall ${CHART_NAME}
+            helm install ${CHART_NAME} TMS-App-HelmChart-${BUILD_NUMBER}.tgz --namespace=${NAMESPACE_PROD} --create-namespace
+            """
             }
           }
+
+        stage('Test app in PROD') {
+            steps{
+			      sh('''#!/bin/bash
+            sleep 30
+            status=$(curl -o /dev/null  -s  -w "%{http_code}"  http://10.10.18.150:30000)
+	          if [[ $status == 200 ]]; then
+	            curl -X POST -H 'Content-type: application/json' --data '{"text":"SERVICE http://10.10.18.150:30000 AVAILABLE IN TEST NAMESPACE"}' ${SLACK_ID}
+	          else
+	            curl -X POST -H 'Content-type: application/json' --data '{"text":"SERVICE http://10.10.18.150:30000 IS UNAVAILABLE IN TEST NAMESPACE"}' ${SLACK_ID}
+	          fi
+            '''
+	          )
+            }
+        }
 
         stage('Remove unused App-HelmChart') {
             steps{
