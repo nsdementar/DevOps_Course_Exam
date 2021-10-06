@@ -125,7 +125,7 @@ pipeline {
 
         stage('Test app') {
             steps{
-			      sh('''#!/bin/bash
+			      sh ('''#!/bin/bash
             sleep 30
             status_app_test=$(curl -o /dev/null  -s  -w "%{http_code}"  http://10.10.18.150:30000)
 	          if [[ $status_app_test == 200 ]]; then
@@ -140,7 +140,7 @@ pipeline {
 
          stage('Deploy to prod ns') {
             steps{
-            sh ("""#!/bin/bash
+            sh ('''#!/bin/bash
             status_prod=$(kubectl -n ${NAMESPACE_PROD} get svc | grep -q "${CHART_NAME}-service")
             if [[ $status_prod == 0 ]]; then
              kubectl -n ${NAMESPACE_PROD} delete svc ${CHART_NAME}-service
@@ -154,9 +154,8 @@ pipeline {
 	          else
 	            curl -X POST -H 'Content-type: application/json' --data '{"text":"SERVICE http://10.10.18.150:30001 IS UNAVAILABLE IN TEST NAMESPACE"}' ${SLACK_ID}
 	          fi
-             """
-             )
-             
+            '''
+            )
             }
           }
 
