@@ -138,6 +138,14 @@ pipeline {
             }
         }
 
+        stage('Approval') {
+            steps {
+              script {
+                def userInput = input(id: 'confirm', message: 'Apply deploy to PROD?', parameters: [ [$class: 'BooleanParameterDefinition', defaultValue: false, description: 'Apply deploy to prod', name: 'confirm'] ])
+                }
+            }
+        }
+
          stage('Deploy to prod ns') {
             steps{
             sh ('''#!/bin/bash
@@ -150,9 +158,9 @@ pipeline {
             sleep 30
             status_app_prod=$(curl -o /dev/null  -s  -w "%{http_code}"  http://10.10.18.150:30001)
 	          if [[ $status_app_prod == 200 ]]; then
-	            curl -X POST -H 'Content-type: application/json' --data '{"text":"SERVICE http://10.10.18.150:30001 AVAILABLE IN TEST NAMESPACE"}' ${SLACK_ID}
+	            curl -X POST -H 'Content-type: application/json' --data '{"text":"SERVICE http://10.10.18.150:30001 AVAILABLE IN PROD NAMESPACE"}' ${SLACK_ID}
 	          else
-	            curl -X POST -H 'Content-type: application/json' --data '{"text":"SERVICE http://10.10.18.150:30001 IS UNAVAILABLE IN TEST NAMESPACE"}' ${SLACK_ID}
+	            curl -X POST -H 'Content-type: application/json' --data '{"text":"SERVICE http://10.10.18.150:30001 IS UNAVAILABLE IN PROD NAMESPACE"}' ${SLACK_ID}
 	          fi
             '''
             )
