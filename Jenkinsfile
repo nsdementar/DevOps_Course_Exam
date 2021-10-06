@@ -96,7 +96,7 @@ pipeline {
           }
         }
 
-        stage('Remove Unused docker image') {
+        stage('Remove unused docker image') {
             steps{
             sh "docker rmi ${USER_REPO}/${IMAGE_NAME}:${DOCKER_TAG}"
             }
@@ -111,7 +111,7 @@ pipeline {
         stage('Deploy to test ns') {
             steps{
              sh """
-             helm install ${CHART_NAME} TMS-App-HelmChart-${BUILD_NUMBER}.tgz
+             helm install ${CHART_NAME} TMS-App-HelmChart-${BUILD_NUMBER}.tgz --namespace=${NAMESPACE_TEST} --create-namespace
              """
             }
           }
@@ -119,29 +119,28 @@ pipeline {
         stage('Test app') {
             steps{
 			      sh('''#!/bin/bash
-            sleep 40
+            sleep 30
             status=$(curl -o /dev/null  -s  -w "%{http_code}"  http://10.10.18.150:30000)
 	          if [[ $status == 200 ]]; then
-	            curl -X POST -H 'Content-type: application/json' --data '{"text":"SERVICE http://10.10.18.150:30000 AVAILABLE"}' ${SLACK_ID}
+	            curl -X POST -H 'Content-type: application/json' --data '{"text":"SERVICE http://10.10.18.150:30000 AVAILABLE IN TEST NAMESPACE"}' ${SLACK_ID}
 	          else
-	            curl -X POST -H 'Content-type: application/json' --data '{"text":"SERVICE http://10.10.18.150:30000 IS UNAVAILABLE"}' ${SLACK_ID}
+	            curl -X POST -H 'Content-type: application/json' --data '{"text":"SERVICE http://10.10.18.150:30000 IS UNAVAILABLE IN TEST NAMESPACE"}' ${SLACK_ID}
 	          fi
             '''
 	          )
             }
         }
-            
-        /*stage('Deploy to prod ns') {
+
+        stage('Deploy to prod ns') {
             steps{
-            sh "kubectl ${POD_NAME}-${GIT_COMMIT[0..7]} --image=${USER_REPO}/${IMAGE_NAME}:${GIT_COMMIT[0..7]} --namespace=${NAMESPACE_TEST} --port 80"
+            sh "helm install ${CHART_NAME} TMS-App-HelmChart-${BUILD_NUMBER}.tgz --namespace=${NAMESPACE_PROD} --create-namespace"
             }
           }
-      
-        stage('Remove Unused pods in test ns') {
+
+        stage('Remove unused App-HelmChart') {
             steps{
-            sh "kubectl --namespace test delete pods --all"
+            sh "rm -rf TMS-App-HelmChart*"
             }
-          }
-          */
+         }
   }
 }

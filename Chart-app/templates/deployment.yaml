@@ -1,14 +1,15 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: test-ns
-  labels:
-    name: test-ns
+#apiVersion: v1
+#kind: Namespace
+#metadata:
+#  name: {{ .Release.Namespace }}
+#  labels:
+#    name: {{ .Release.Namespace }}
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}-deployment
+  namespace: {{ .Release.Namespace }}
   labels:
     app: {{ .Release.Name }}-app
 spec:
@@ -31,6 +32,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ .Release.Name }}-service
+  namespace: {{ .Release.Namespace }}
 spec:
   selector:
     project: {{ .Release.Name }}
