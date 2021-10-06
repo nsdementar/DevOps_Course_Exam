@@ -1,3 +1,5 @@
+def SLACK_ID
+
 pipeline {
     agent { node { label 'Ansible' } }
     parameters {
@@ -7,6 +9,7 @@ pipeline {
     string(name: 'POD_NAME', defaultValue: 'tms-exam-pod', description: '')
     string(name: 'NAMESPACE_TEST', defaultValue: 'test', description: '')
     string(name: 'NAMESPACE_PROD', defaultValue: 'prod', description: '')
+    string(name: 'CHART_NAME', defaultValue: 'tms-exam', description: '')
     }
     environment {
         registry = "alexpalkhouski/tms"
@@ -108,23 +111,25 @@ pipeline {
         stage('Deploy to test ns') {
             steps{
              sh """
-             helm install tms-exam TMS-App-HelmChart-${BUILD_NUMBER}.tgz
+             helm install ${CHART_NAME} TMS-App-HelmChart-${BUILD_NUMBER}.tgz
              """
             }
           }
 
-       /* stage('Test app') {
+        stage('Test app') {
             steps{
-			      sh('''#!/bin/bash
-            status=$(curl -o /dev/null  -s  -w "%{http_code}"  http://10.10.18.142:8080)
+			      sh("""
+            #!/bin/bash
+            status=$(curl -o /dev/null  -s  -w "%{http_code}"  http://10.10.18.150:30000)
 	          if [ $status == 200 ]
 	          then
-	          curl -X POST -H 'Content-type: application/json' --data '{"text":"SERVICE IS UNAVAILABLE "}' ${env.SLACK_ID}
+	          curl -X POST -H 'Content-type: application/json' --data '{"text":"SERVICE AVAILABLE "}' ${SLACK_ID}
 	          else
-	          curl -X POST -H 'Content-type: application/json' --data '{"text":"SERVICE AVAILABLE"}' ${env.SLACK_ID}
+	          curl -X POST -H 'Content-type: application/json' --data '{"text":"SERVICE IS UNAVAILABLE"}' ${SLACK_ID}
 	          fi
-	          ''')
-
+            """
+	          )
+            
         /*stage('Deploy to prod ns') {
             steps{
             sh "kubectl ${POD_NAME}-${GIT_COMMIT[0..7]} --image=${USER_REPO}/${IMAGE_NAME}:${GIT_COMMIT[0..7]} --namespace=${NAMESPACE_TEST} --port 80"
