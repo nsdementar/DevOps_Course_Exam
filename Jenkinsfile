@@ -110,7 +110,7 @@ pipeline {
 
         stage('Deploy to test ns') {
             steps{
-            sh ("""#!/bin/bash
+            sh ('''#!/bin/bash
             status_prod=$(kubectl -n ${NAMESPACE_TEST} get svc | grep -q "${CHART_NAME}-service")
             if [[ $status_test == 0 ]]; then
              kubectl -n ${NAMESPACE_TEST} delete svc ${CHART_NAME}-service
@@ -118,7 +118,7 @@ pipeline {
              helm upgrade --install ${CHART_NAME} TMS-App-HelmChart-${BUILD_NUMBER}.tgz -n ${NAMESPACE_TEST} --create-namespace --set Ports.NodePort=30001
             fi
              helm upgrade ${CHART_NAME} TMS-App-HelmChart-${BUILD_NUMBER}.tgz -n ${NAMESPACE_TEST} --install --create-namespace
-             """
+            '''
             )
             }
           }
