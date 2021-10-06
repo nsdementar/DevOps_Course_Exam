@@ -108,8 +108,7 @@ pipeline {
         stage('Deploy to test ns') {
             steps{
              sh """
-             helm install tms-exam Chart-app/
-             kubectl run -it --rm curler --image=curlimages/curl curl tms-exam-service:30000
+             helm install tms-exam TMS-App-HelmChart-${BULID_NUMBER}.tgz
              """
             }
           }
