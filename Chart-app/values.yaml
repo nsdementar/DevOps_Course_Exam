@@ -1,8 +1,8 @@
 image:
-  repository: "alexpalkhouski"
-  name: "tms-exam-image"
+  repository: "alexpalkhouski/tms-exam-image"
   tag: ""
 
 ReplicaCount: 2
-Port: 80
-NodePort: 30000
+ports:
+  Port: 80
+  NodePort: 30000

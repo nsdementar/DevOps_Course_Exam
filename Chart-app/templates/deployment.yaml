@@ -16,8 +16,8 @@ spec:
   type: NodePort
   ports:
     - name : http
-      port: {{ .Values.Port }}
-      nodePort: {{ .Values.NodePort }}
+      port: {{ .Values.ports.Port }}
+      nodePort: {{ .Values.ports.NodePort }}
 ---
 apiVersion: apps/v1
 kind: Deployment
