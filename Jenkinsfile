@@ -61,16 +61,15 @@ pipeline {
           }
         }
 
-        /*stage('Create k8s cluster') {
+        stage('Create k8s cluster') {
             steps {
-                echo "========== Start Ansible Playbook =========="
                 sh '''
                 [ ! -d 'kubespray' ] && git clone https://github.com/kubernetes-sigs/kubespray.git
                 cd kubespray
                 ansible-playbook -i ../terraform/hosts cluster.yml --become --become-user=root --private-key=../terraform/k8s-cluster-private'''
               }
         }
-*/
+
         stage('Start dockerfile_lint') {
             steps {
                 echo "========== Start Dockerfile_lint =========="
@@ -153,7 +152,7 @@ pipeline {
             if [[ $status_prod == 0 ]]; then
              kubectl -n ${NAMESPACE_PROD} delete svc ${CHART_NAME}-service
             else
-             helm upgrade --install ${CHART_NAME} TMS-App-HelmChart-${BUILD_NUMBER}.tgz -n ${NAMESPACE_PROD} --create-namespace --set Ports.NodePort=30001
+             helm upgrade --install ${CHART_NAME} TMS-App-HelmChart-${BUILD_NUMBER}.tgz -n ${NAMESPACE_PROD} --create-namespace --set Ports.NodePort=30001 --set ReplicaCount=2
             fi
             sleep 30
             status_app_prod=$(curl -o /dev/null  -s  -w "%{http_code}"  http://10.10.18.150:30001)
