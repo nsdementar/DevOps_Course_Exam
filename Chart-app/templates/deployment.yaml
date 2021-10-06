@@ -9,21 +9,21 @@ metadata:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-deployment
+  name: tms-exam-deployment
   labels:
-    app: {{ .Release.Name }}-app
+    app: tms-exam-app
 spec:
   replicas: {{ .Values.ReplicaCount }}
   selector: 
     matchLabels:
-      project: {{ .Release.Name }}
+      project: tms-exam
   template:
     metadata:
       labels:
-        project: {{ .Release.Name }}
+        project: tms-exam
     spec:
       containers:
-        - name: {{ .Release.Name }}-web
+        - name: tms-exam-web
           image: {{ .Values.image.repository }}: {{ .Values.image.tag | default .Chart.AppVersion }}
           ports: 
             - containerPort: 80
@@ -34,7 +34,7 @@ metadata:
   name: tms-exam-service
 spec:
   selector:
-    project: {{ .Release.Name }}
+    project: tms-exam
   type: NodePort
   ports:
     - name : http
