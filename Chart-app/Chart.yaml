@@ -1,4 +1,4 @@
-apiVersion: v2
+apiVersion: v3
 name: TMS-App-HelmChart
 description: My Helm chart for Kubernetes
 type: application
