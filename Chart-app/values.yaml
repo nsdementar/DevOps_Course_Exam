@@ -1,5 +1,7 @@
-Container:
-  Image: alexpalkhouski/tms-exam-image:4c7ccd94
+image:
+  repository: "alexpalkhouski"
+  name: "tms-exam-image"
+  tag: ""
 
 ReplicaCount: 2
 Port: 80

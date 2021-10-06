@@ -12,6 +12,8 @@ pipeline {
         registry = "alexpalkhouski/tms"
         registryCredential = 'dockerhub_id'
         dockerImage = ''
+        DOCKER_TAG = "${GIT_COMMIT[0..7]}"
+        APP_VERSION = "${DOCKER_TAG}"
     }
     options {
       ansiColor('xterm')
@@ -30,9 +32,11 @@ pipeline {
             steps {
               script {
                 echo "========== Start Terraform plan =========="
-                sh '''cd terraform
+                sh """
+                cd terraform
                 terraform init
-                terraform plan -out=tfplan -input=false'''
+                terraform plan -out=tfplan -input=false
+                """
                 }
             }
         }
@@ -83,7 +87,7 @@ pipeline {
             steps{
               script {
               docker.withRegistry( '', registryCredential ) {
-              dockerImage.push("${GIT_COMMIT[0..7]}")
+              dockerImage.push("${DOCKER_TAG}")
               }
             }
           }
@@ -91,16 +95,22 @@ pipeline {
 
         stage('Remove Unused docker image') {
             steps{
-            sh "docker rmi ${USER_REPO}/${IMAGE_NAME}:${GIT_COMMIT[0..7]}"
+            sh "docker rmi ${USER_REPO}/${IMAGE_NAME}:${DOCKER_TAG}"
             }
           }
 
+        stage("Helm package") {
+            steps{
+            sh "helm package Chart-app/ --version ${BUILD_NUMBER} --app-version ${APP_VERSION}"
+            }
+        }
+
         stage('Deploy to test ns') {
             steps{
-             sh '''
+             sh """
              helm install tms-exam Chart-app/
              kubectl run -it --rm curler --image=curlimages/curl curl tms-exam-service:30000
-             '''
+             """
             }
           }
 
