@@ -118,8 +118,7 @@ pipeline {
 
         stage('Test app') {
             steps{
-			      sh("""
-            #!/bin/bash
+			      sh('''#!/bin/bash
             status=$(curl -o /dev/null  -s  -w "%{http_code}"  http://10.10.18.150:30000)
 	          if [ $status == 200 ]
 	          then
@@ -127,7 +126,7 @@ pipeline {
 	          else
 	          curl -X POST -H 'Content-type: application/json' --data '{"text":"SERVICE IS UNAVAILABLE"}' ${SLACK_ID}
 	          fi
-            """
+            '''
 	          )
             
         /*stage('Deploy to prod ns') {
