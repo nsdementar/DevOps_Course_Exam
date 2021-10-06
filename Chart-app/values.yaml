@@ -1,7 +1,6 @@
 image:
   repository: "alexpalkhouski/tms-exam-image"
   tag: ""
-
 ReplicaCount: 2
 ports:
   Port: 80

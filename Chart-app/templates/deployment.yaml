@@ -15,9 +15,8 @@ spec:
     project: tms-exam
   type: NodePort
   ports:
-    - name : http
-      port: {{ .Values.ports.Port }}
-      nodePort: {{ .Values.ports.NodePort }}
+    port: {{ .Values.ports.Port | default 80 }}
+    nodePort: {{ .Values.ports.NodePort | default 30000 }}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -26,7 +25,7 @@ metadata:
   labels:
     app: tms-exam-app
 spec:
-  replicas: {{ .Values.ReplicaCount }}
+  replicas: {{ .Values.ReplicaCount | default 2 }}
   selector: 
     matchLabels:
       project: tms-exam
