@@ -110,6 +110,7 @@ pipeline {
         stage('Deploy to test ns') {
             steps{
              sh """
+             kubectl -n ${NAMESPACE} delete svc ${CHART_NAME}-service
              helm upgrade ${CHART_NAME} TMS-App-HelmChart-${BUILD_NUMBER}.tgz -n ${NAMESPACE} --install --create-namespace
              """
             }
