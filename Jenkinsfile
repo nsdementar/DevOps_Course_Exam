@@ -7,7 +7,8 @@ pipeline {
     string(name: 'IMAGE_NAME', defaultValue: 'tms-exam-image', description: '')
     string(name: 'USER_REPO', defaultValue: 'alexpalkhouski', description: '')
     string(name: 'POD_NAME', defaultValue: 'tms-exam-pod', description: '')
-    string(name: 'NAMESPACE', defaultValue: 'test-ns', description: '')
+    string(name: 'NAMESPACE_TEST', defaultValue: 'test-ns', description: '')
+    string(name: 'NAMESPACE_PROD', defaultValue: 'prod-ns', description: '')
     string(name: 'CHART_NAME', defaultValue: 'tms-exam', description: '')
     }
     environment {
@@ -109,9 +110,14 @@ pipeline {
 
         stage('Deploy to test ns') {
             steps{
-             sh """
-             kubectl -n ${NAMESPACE} delete svc ${CHART_NAME}-service
-             helm upgrade ${CHART_NAME} TMS-App-HelmChart-${BUILD_NUMBER}.tgz -n ${NAMESPACE} --install --create-namespace
+            sh """#!/bin/bash
+            status_prod=$(kubectl -n ${NAMESPACE_TEST} get svc | grep -q "${CHART_NAME}-service")
+            if [[ $status_test == 0 ]]; then
+             kubectl -n ${NAMESPACE_TEST} delete svc ${CHART_NAME}-service
+            else
+             helm upgrade --install ${CHART_NAME} TMS-App-HelmChart-${BUILD_NUMBER}.tgz -n ${NAMESPACE_TEST} --create-namespace --set Ports.NodePort=30001
+            fi
+             helm upgrade ${CHART_NAME} TMS-App-HelmChart-${BUILD_NUMBER}.tgz -n ${NAMESPACE_TEST} --install --create-namespace
              """
             }
           }
@@ -120,8 +126,8 @@ pipeline {
             steps{
 			      sh('''#!/bin/bash
             sleep 30
-            status=$(curl -o /dev/null  -s  -w "%{http_code}"  http://10.10.18.150:30000)
-	          if [[ $status == 200 ]]; then
+            status_app_test=$(curl -o /dev/null  -s  -w "%{http_code}"  http://10.10.18.150:30000)
+	          if [[ $status_app_test == 200 ]]; then
 	            curl -X POST -H 'Content-type: application/json' --data '{"text":"SERVICE http://10.10.18.150:30000 AVAILABLE IN TEST NAMESPACE"}' ${SLACK_ID}
 	          else
 	            curl -X POST -H 'Content-type: application/json' --data '{"text":"SERVICE http://10.10.18.150:30000 IS UNAVAILABLE IN TEST NAMESPACE"}' ${SLACK_ID}
@@ -130,6 +136,28 @@ pipeline {
 	          )
             }
         }
+
+         stage('Deploy to prod ns') {
+            steps{
+            sh ("""#!/bin/bash
+            status_prod=$(kubectl -n ${NAMESPACE_PROD} get svc | grep -q "${CHART_NAME}-service")
+            if [[ $status_prod == 0 ]]; then
+             kubectl -n ${NAMESPACE_PROD} delete svc ${CHART_NAME}-service
+            else
+             helm upgrade --install ${CHART_NAME} TMS-App-HelmChart-${BUILD_NUMBER}.tgz -n ${NAMESPACE_PROD} --create-namespace --set Ports.NodePort=30001
+            fi
+            sleep 30
+            status_app_prod=$(curl -o /dev/null  -s  -w "%{http_code}"  http://10.10.18.150:30001)
+	          if [[ $status_app_prod == 200 ]]; then
+	            curl -X POST -H 'Content-type: application/json' --data '{"text":"SERVICE http://10.10.18.150:30001 AVAILABLE IN TEST NAMESPACE"}' ${SLACK_ID}
+	          else
+	            curl -X POST -H 'Content-type: application/json' --data '{"text":"SERVICE http://10.10.18.150:30001 IS UNAVAILABLE IN TEST NAMESPACE"}' ${SLACK_ID}
+	          fi
+             """
+             )
+             
+            }
+          }
 
         stage('Remove unused App-HelmChart') {
             steps{
