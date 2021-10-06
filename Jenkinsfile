@@ -108,7 +108,7 @@ pipeline {
         stage('Deploy to test ns') {
             steps{
              sh """
-             helm install tms-exam TMS-App-HelmChart-${BULID_NUMBER}.tgz
+             helm install tms-exam TMS-App-HelmChart-${BUILD_NUMBER}.tgz
              """
             }
           }
