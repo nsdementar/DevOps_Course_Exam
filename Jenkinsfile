@@ -119,12 +119,12 @@ pipeline {
         stage('Test app') {
             steps{
 			      sh('''#!/bin/bash
+            sleep 40
             status=$(curl -o /dev/null  -s  -w "%{http_code}"  http://10.10.18.150:30000)
-	          if [ $status == 200 ]
-	          then
-	          curl -X POST -H 'Content-type: application/json' --data '{"text":"SERVICE AVAILABLE "}' ${SLACK_ID}
+	          if [[ $status == 200 ]]; then
+	            curl -X POST -H 'Content-type: application/json' --data '{"text":"SERVICE http://10.10.18.150:30000 AVAILABLE"}' ${SLACK_ID}
 	          else
-	          curl -X POST -H 'Content-type: application/json' --data '{"text":"SERVICE IS UNAVAILABLE"}' ${SLACK_ID}
+	            curl -X POST -H 'Content-type: application/json' --data '{"text":"SERVICE http://10.10.18.150:30000 IS UNAVAILABLE"}' ${SLACK_ID}
 	          fi
             '''
 	          )
