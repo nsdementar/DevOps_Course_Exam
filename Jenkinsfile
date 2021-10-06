@@ -111,7 +111,7 @@ pipeline {
         stage('Deploy to test ns') {
             steps{
              sh """
-             helm uninstall ${CHART_NAME} -n 
+             helm uninstall ${CHART_NAME}
              helm install ${CHART_NAME} TMS-App-HelmChart-${BUILD_NUMBER}.tgz -n ${NAMESPACE_TEST} --create-namespace
              """
             }
