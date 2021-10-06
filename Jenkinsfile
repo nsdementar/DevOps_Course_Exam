@@ -138,7 +138,7 @@ pipeline {
             }
         }
 
-        stage('Approval') {
+        stage('Approval deploy to prod') {
             steps {
               script {
                 def userInput = input(id: 'confirm', message: 'Apply deploy to PROD?', parameters: [ [$class: 'BooleanParameterDefinition', defaultValue: false, description: 'Apply deploy to prod', name: 'confirm'] ])
