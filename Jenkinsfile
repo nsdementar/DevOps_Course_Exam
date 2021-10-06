@@ -128,6 +128,8 @@ pipeline {
 	          fi
             '''
 	          )
+            }
+        }
             
         /*stage('Deploy to prod ns') {
             steps{
