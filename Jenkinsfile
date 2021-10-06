@@ -60,7 +60,7 @@ pipeline {
             }
           }
         }
-
+/*
         stage('Create k8s cluster') {
             steps {
                 sh '''
@@ -69,7 +69,7 @@ pipeline {
                 ansible-playbook -i ../terraform/hosts cluster.yml --become --become-user=root --private-key=../terraform/k8s-cluster-private'''
               }
         }
-
+*/
         stage('Start dockerfile_lint') {
             steps {
                 echo "========== Start Dockerfile_lint =========="
