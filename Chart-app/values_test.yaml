@@ -1,0 +1,7 @@
+image:
+  repository: "alexpalkhouski/tms-exam-image"
+  tag: ""
+ReplicaCount: 6
+Ports:
+  Port: 80
+  NodePort: 30000

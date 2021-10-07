@@ -10,6 +10,9 @@ pipeline {
     string(name: 'NAMESPACE_TEST', defaultValue: 'test-ns', description: '')
     string(name: 'NAMESPACE_PROD', defaultValue: 'prod-ns', description: '')
     string(name: 'CHART_NAME', defaultValue: 'tms-exam', description: '')
+    string(name: 'CHART_PATH', defaultValue: 'Chart-app', description: '')
+    string(name: 'VALUES_PROD', defaultValue: 'values_prod.yaml', description: '')
+    string(name: 'VALUES_TEST', defaultValue: 'values_test.yaml', description: '')
     }
     environment {
         registry = "alexpalkhouski/tms"
@@ -102,13 +105,18 @@ pipeline {
             }
           }
 
-        stage("Helm package") {
+/*        stage("Helm package") {
             steps{
             sh "helm package Chart-app/ --version ${BUILD_NUMBER} --app-version ${APP_VERSION}"
             }
-        }
-
-        stage('Deploy to test ns') {
+        } */
+          stage('Deploy to test ns') {
+            steps{
+            sh "helm upgrade --install ${CHART_NAME} ${CHART_PATH}/ -n ${NAMESPACE_TEST} --create-namespace -f ${CHART_PATH}/${VALUES_TEST} "
+            }
+          }
+/*
+          stage('Deploy to test ns') {
             steps{
             sh ('''#!/bin/bash
             status_prod=$(kubectl --namespace=${NAMESPACE_TEST} get svc | grep -q "${CHART_NAME}-service")
@@ -122,7 +130,7 @@ pipeline {
             )
             }
           }
-
+*/
         stage('Test app') {
             steps{
 			      sh ('''#!/bin/bash
