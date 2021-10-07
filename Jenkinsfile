@@ -112,7 +112,9 @@ pipeline {
         } */
           stage('Deploy to test ns') {
             steps{
-            sh "helm upgrade --install ${CHART_NAME} ${CHART_PATH}/ -n ${NAMESPACE_TEST} --create-namespace -f ${CHART_PATH}/${VALUES_TEST} "
+            sh "helm upgrade --install ${CHART_NAME} ${CHART_PATH}/ -n ${NAMESPACE_TEST} --create-namespace \\
+             -f ${CHART_PATH}/${VALUES_TEST} \\
+             --app-version ${APP_VERSION}"
             }
           }
 /*
