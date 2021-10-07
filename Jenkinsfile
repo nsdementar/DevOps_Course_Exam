@@ -127,7 +127,7 @@ pipeline {
             steps{
 			      sh ('''#!/bin/bash
             sleep 10
-            status_app_test=$(curl -o /dev/null  -s  -w "%{http_code}"  http://10.10.18.150:30000)
+            status_app_test=$(curl -o /dev/null  -s  -w "%{http_code}"  http://10.10.18.152:30000)
 	          if [[ $status_app_test == 200 ]]; then
 	            curl -X POST -H 'Content-type: application/json' --data '{"text":"SERVICE http://tms.exam:30000 AVAILABLE IN TEST NAMESPACE"}' ${SLACK_ID}
 	          else
@@ -156,7 +156,7 @@ pipeline {
              helm upgrade --install ${CHART_NAME} TMS-App-HelmChart-${BUILD_NUMBER}.tgz -n ${NAMESPACE_PROD} --create-namespace --set Ports.NodePort=30001 --set ReplicaCount=2
             fi
             sleep 30
-            status_app_prod=$(curl -o /dev/null  -s  -w "%{http_code}"  http://10.10.18.150:30001)
+            status_app_prod=$(curl -o /dev/null  -s  -w "%{http_code}"  http://10.10.18.152:30001)
 	          if [[ $status_app_prod == 200 ]]; then
 	            curl -X POST -H 'Content-type: application/json' --data '{"text":"SERVICE http://tms.exam:30001 AVAILABLE IN PROD NAMESPACE"}' ${SLACK_ID}
 	          else
