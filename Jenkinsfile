@@ -61,7 +61,7 @@ pipeline {
           }
         }
 
-        stage('Create k8s cluster') {
+        stage('Create/Update k8s cluster') {
             steps {
                 sh '''
                 sleep 30
