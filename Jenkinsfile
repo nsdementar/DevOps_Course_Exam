@@ -126,7 +126,7 @@ pipeline {
         stage('Test app') {
             steps{
 			      sh ('''#!/bin/bash
-            sleep 30
+            sleep 10
             status_app_test=$(curl -o /dev/null  -s  -w "%{http_code}"  http://10.10.18.150:30000)
 	          if [[ $status_app_test == 200 ]]; then
 	            curl -X POST -H 'Content-type: application/json' --data '{"text":"SERVICE http://tms.exam:30000 AVAILABLE IN TEST NAMESPACE"}' ${SLACK_ID}
