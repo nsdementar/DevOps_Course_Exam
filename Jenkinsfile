@@ -64,16 +64,15 @@ pipeline {
           }
         }
 
-      /*  stage('Create/Update k8s cluster') {
+        stage('Create/Update k8s cluster') {
             steps {
                 sh '''
                 sleep 30
-                [ ! -d 'kubespray' ] && git clone https://github.com/kubernetes-sigs/kubespray.git
                 cd kubespray
                 ansible-playbook -i ../terraform/hosts cluster.yml --become --become-user=root --private-key=../terraform/k8s-cluster-private'''
               }
         }
-*/
+
         stage('Start dockerfile_lint') {
             steps {
                 echo "========== Start Dockerfile_lint =========="
