@@ -16,8 +16,7 @@ spec:
         project: {{ .Release.Name }}
     spec:
       containers:
-        - name: {{ .Release.Name }}-web
-#          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        - name: {{ .Release.Name }}-web         
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           ports: 
             - containerPort: 80

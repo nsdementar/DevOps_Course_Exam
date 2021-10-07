@@ -64,7 +64,7 @@ pipeline {
           }
         }
 
-        stage('Create/Update k8s cluster') {
+ /*       stage('Create/Update k8s cluster') {
             steps {
                 sh '''
                 sleep 30
@@ -72,7 +72,7 @@ pipeline {
                 ansible-playbook -i ../terraform/hosts cluster.yml --become --become-user=root --private-key=../terraform/k8s-cluster-private'''
               }
         }
-
+*/
         stage('Start dockerfile_lint') {
             steps {
                 echo "========== Start Dockerfile_lint =========="
@@ -104,32 +104,12 @@ pipeline {
             }
           }
 
-/*        stage("Helm package") {
-            steps{
-            sh "helm package Chart-app/ --version ${BUILD_NUMBER} --app-version ${APP_VERSION}"
-            }
-        } */
-          stage('Deploy to test ns') {
+        stage('Deploy to test ns') {
             steps{
             sh "helm upgrade --install ${CHART_NAME} ${CHART_PATH}/ -n ${NAMESPACE_TEST} --create-namespace -f ${CHART_PATH}/${VALUES_TEST} --set image.tag=${DOCKER_TAG}"
             }
           }
-/*
-          stage('Deploy to test ns') {
-            steps{
-            sh ('''#!/bin/bash
-            status_prod=$(kubectl --namespace=${NAMESPACE_TEST} get svc | grep -q "${CHART_NAME}-service")
-            if [[ $status_test == 0 ]]; then
-             kubectl -n ${NAMESPACE_TEST} delete svc ${CHART_NAME}-service
-            else
-             helm upgrade --install ${CHART_NAME} TMS-App-HelmChart-${BUILD_NUMBER}.tgz -n ${NAMESPACE_TEST} --create-namespace
-            fi
-             helm upgrade ${CHART_NAME} TMS-App-HelmChart-${BUILD_NUMBER}.tgz -n ${NAMESPACE_TEST} --install --create-namespace
-            '''
-            )
-            }
-          }
-*/
+
         stage('Test app') {
             steps{
 			      sh ('''#!/bin/bash
@@ -156,12 +136,7 @@ pipeline {
          stage('Deploy to prod ns') {
             steps{
             sh ('''#!/bin/bash
-            status_prod=$(kubectl --namespace=${NAMESPACE_PROD} get svc | grep -q "${CHART_NAME}-service")
-            if [[ $status_prod == 0 ]]; then
-             kubectl -n ${NAMESPACE_PROD} delete svc ${CHART_NAME}-service
-            else
-             helm upgrade --install ${CHART_NAME} TMS-App-HelmChart-${BUILD_NUMBER}.tgz -n ${NAMESPACE_PROD} --create-namespace --set Ports.NodePort=30001 --set ReplicaCount=2
-            fi
+            helm upgrade --install ${CHART_NAME} ${CHART_PATH}/ -n ${NAMESPACE_PROD} --create-namespace -f ${CHART_PATH}/${VALUES_PROD} --set image.tag=${DOCKER_TAG}
             sleep 30
             status_app_prod=$(curl -o /dev/null  -s  -w "%{http_code}"  http://10.10.18.158:30001)
 	          if [[ $status_app_prod == 200 ]]; then
