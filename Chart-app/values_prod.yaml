@@ -1,7 +1,9 @@
 image:
   repository: "alexpalkhouski/tms-exam-image"
   tag: ""
-ReplicaCount: 6
+ReplicaCount: 2
 Ports:
   Port: 80
-  NodePort: 30000
+  NodePort: 30001
+Service:
+  name: service-prod
