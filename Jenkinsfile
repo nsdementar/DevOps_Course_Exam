@@ -6,7 +6,6 @@ pipeline {
     string(name: 'PATH_DOCKERFILE', defaultValue: 'app/Dockerfile', description: '')
     string(name: 'IMAGE_NAME', defaultValue: 'tms-exam-image', description: '')
     string(name: 'USER_REPO', defaultValue: 'alexpalkhouski', description: '')
-    string(name: 'POD_NAME', defaultValue: 'tms-exam-pod', description: '')
     string(name: 'NAMESPACE_TEST', defaultValue: 'test-ns', description: '')
     string(name: 'NAMESPACE_PROD', defaultValue: 'prod-ns', description: '')
     string(name: 'CHART_NAME', defaultValue: 'tms-exam', description: '')
@@ -64,7 +63,7 @@ pipeline {
           }
         }
 
- /*       stage('Create/Update k8s cluster') {
+        stage('Create/Update k8s cluster') {
             steps {
                 sh '''
                 sleep 30
@@ -72,7 +71,7 @@ pipeline {
                 ansible-playbook -i ../terraform/hosts cluster.yml --become --become-user=root --private-key=../terraform/k8s-cluster-private'''
               }
         }
-*/
+
         stage('Start dockerfile_lint') {
             steps {
                 echo "========== Start Dockerfile_lint =========="
@@ -145,14 +144,8 @@ pipeline {
 	            curl -X POST -H 'Content-type: application/json' --data '{"text":"SERVICE http://tms.exam:30001 IS UNAVAILABLE IN PROD NAMESPACE"}' ${SLACK_ID}
 	          fi
             '''
-            )
-            }
-          }
-
-        stage('Remove unused Helm package') {
-            steps{
-            sh "rm -rf TMS-App-HelmChart*"
-            }
-         }
+          )
+        }
+      }
   }
 }
