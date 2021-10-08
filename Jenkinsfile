@@ -66,7 +66,7 @@ pipeline {
         stage('Create/Update k8s cluster') {
             steps {
                 sh '''
-                sleep 30
+                sleep 15
                 cd kubespray
                 ansible-playbook -i ../terraform/hosts cluster.yml --become --become-user=root --private-key=../terraform/k8s-cluster-private'''
               }
@@ -112,7 +112,7 @@ pipeline {
         stage('Test app') {
             steps{
 			      sh ('''#!/bin/bash
-            sleep 10
+            sleep 15
             status_app_test=$(curl -o /dev/null  -s  -w "%{http_code}"  http://10.10.18.158:30000)
 	          if [[ $status_app_test == 200 ]]; then
 	            curl -X POST -H 'Content-type: application/json' --data '{"text":"SERVICE http://tms.exam:30000 AVAILABLE IN TEST NAMESPACE"}' ${SLACK_ID}
@@ -136,7 +136,7 @@ pipeline {
             steps{
             sh ('''#!/bin/bash
             helm upgrade --install ${CHART_NAME} ${CHART_PATH}/ -n ${NAMESPACE_PROD} --create-namespace -f ${CHART_PATH}/${VALUES_PROD} --set image.tag=${DOCKER_TAG}
-            sleep 30
+            sleep 15
             status_app_prod=$(curl -o /dev/null  -s  -w "%{http_code}"  http://10.10.18.158:30001)
 	          if [[ $status_app_prod == 200 ]]; then
 	            curl -X POST -H 'Content-type: application/json' --data '{"text":"SERVICE http://tms.exam:30001 AVAILABLE IN PROD NAMESPACE"}' ${SLACK_ID}
